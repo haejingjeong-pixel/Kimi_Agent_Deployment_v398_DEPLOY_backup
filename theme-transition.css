@@ -72,16 +72,18 @@ body.codex-theme-night img[alt="altar"] {
 
 body.codex-theme-desert img[alt="altar"],
 body.codex-theme-gethsemane img[alt="altar"],
-body.codex-theme-night img[alt="altar"] {
+body.codex-theme-night img[alt="altar"],
+body[data-current-theme="사막의 제단"] img[alt="altar"],
+body[data-current-theme="겟세마네 동산"] img[alt="altar"],
+body[data-current-theme="어두운 밤"] img[alt="altar"] {
   --altar-y: -4px;
 }
 
-body[data-extra-theme="mark"] img[alt="altar"],
-body[data-extra-theme="jonah"] img[alt="altar"],
-body[data-extra-theme="sinal"] img[alt="altar"],
-body[data-theme="mark"] img[alt="altar"],
-body[data-theme="jonah"] img[alt="altar"],
-body[data-theme="sinal"] img[alt="altar"] {
+body.codex-theme-summer img[alt="altar"],
+body[data-current-theme="여름 녹음"] img[alt="altar"],
+body[data-current-theme="마가 다락방"] img[alt="altar"],
+body[data-current-theme="요나의 고래뱃속"] img[alt="altar"],
+body[data-current-theme="모세의 시내산"] img[alt="altar"] {
   --altar-y: -28px;
   width: 88% !important;
   max-width: 88% !important;
@@ -94,6 +96,53 @@ body[data-theme="sinal"] img[alt="altar"] {
 body.codex-theme-desert img[alt="altar"] {
   filter: none !important;
   opacity: 1 !important;
+}
+
+/* 기본 테마 필터 */
+body.codex-theme-gethsemane img[alt="altar"],
+body[data-current-theme="겟세마네 동산"] img[alt="altar"] {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+body.codex-theme-night img[alt="altar"],
+body[data-current-theme="어두운 밤"] img[alt="altar"] {
+  filter:
+    brightness(0.52)
+    saturate(0.86)
+    contrast(0.96)
+    drop-shadow(0 24px 28px rgba(0, 0, 0, 0.58)) !important;
+}
+
+body.codex-theme-summer img[alt="altar"],
+body[data-current-theme="여름 녹음"] img[alt="altar"] {
+  filter:
+    brightness(0.74)
+    saturate(0.88)
+    contrast(0.98)
+    drop-shadow(0 22px 28px rgba(0, 0, 0, 0.42)) !important;
+}
+
+/* 추가 테마 필터 */
+body[data-current-theme="마가 다락방"] img[alt="altar"] {
+  filter:
+    brightness(1.02)
+    saturate(1.02)
+    drop-shadow(0 18px 34px rgba(55, 30, 18, 0.34)) !important;
+}
+
+body[data-current-theme="요나의 고래뱃속"] img[alt="altar"] {
+  filter:
+    brightness(0.92)
+    saturate(0.92)
+    drop-shadow(0 18px 34px rgba(0, 16, 20, 0.46)) !important;
+}
+
+body[data-current-theme="모세의 시내산"] img[alt="altar"] {
+  filter:
+    brightness(1.0)
+    saturate(0.95)
+    drop-shadow(0 18px 34px rgba(50, 70, 96, 0.32)) !important;
 }
 
 body.codex-theme-summer .summer-waiting-dim {

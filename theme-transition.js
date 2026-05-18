@@ -5,37 +5,110 @@
     "사막의 제단": "assets/g_dessert.webp",
     "겟세마네 동산": "assets/g_dessert.webp",
     "어두운 밤": "assets/b_night.webp",
-    "여름 녹음": "assets/b_woods.webp"
+    "여름 녹음": "assets/b_woods.webp",
+    "마가 다락방": "assets/b_mark.webp",
+    "요나의 고래뱃속": "assets/b_jonah.webp",
+    "모세의 시내산": "assets/b_sinal.webp"
   };
   var BASE_THEME_BACKGROUNDS = {
     "사막의 제단": {
       image: "assets/back_dessert.webp",
       color: "#b77c61",
-      position: "center"
+      position: "center",
+      waitingFilter: "none",
+      prayingFilter: "none"
     },
     "겟세마네 동산": {
       image: "assets/back_gathe3.webp",
       color: "#000000",
-      position: "center 25%"
+      position: "center 25%",
+      waitingFilter: "none",
+      prayingFilter: "none"
     },
     "어두운 밤": {
       image: "assets/back_night.webp",
       color: "#000114",
-      position: "center"
+      position: "center",
+      waitingFilter: "brightness(0.52) saturate(0.86) contrast(0.96) drop-shadow(0 24px 28px rgba(0, 0, 0, 0.58))",
+      prayingFilter: "brightness(1.04) saturate(1.04) contrast(1.03) drop-shadow(0 0 16px rgba(176, 196, 255, 0.16)) drop-shadow(0 22px 24px rgba(0, 0, 0, 0.34))"
     },
     "여름 녹음": {
       image: "assets/back_woods7.webp",
       color: "#091c1f",
-      position: "center 70%"
+      position: "center 70%",
+      waitingFilter: "brightness(0.74) saturate(0.88) contrast(0.98) drop-shadow(0 22px 28px rgba(0, 0, 0, 0.42))",
+      prayingFilter: "brightness(0.84) saturate(0.96) contrast(1.02) drop-shadow(0 0 20px rgba(100, 200, 100, 0.20)) drop-shadow(0 24px 32px rgba(0, 0, 0, 0.28))"
+    },
+    "마가 다락방": {
+      image: "assets/back_mark.webp",
+      color: "#3e2b21",
+      position: "center 52%",
+      waitingFilter: "brightness(1.02) saturate(1.02) drop-shadow(0 18px 34px rgba(55, 30, 18, 0.34))",
+      prayingFilter: "brightness(1.12) saturate(1.06) drop-shadow(0 0 22px rgba(255, 190, 105, 0.28))"
+    },
+    "요나의 고래뱃속": {
+      image: "assets/back_jonah.webp",
+      color: "#010d12",
+      position: "center 52%",
+      waitingFilter: "brightness(0.92) saturate(0.92) drop-shadow(0 18px 34px rgba(0, 16, 20, 0.46))",
+      prayingFilter: "brightness(1.08) saturate(1.02) drop-shadow(0 0 20px rgba(40, 220, 220, 0.24))"
+    },
+    "모세의 시내산": {
+      image: "assets/back_sinal.webp",
+      color: "#536a83",
+      position: "center 48%",
+      waitingFilter: "brightness(1.0) saturate(0.95) drop-shadow(0 18px 34px rgba(50, 70, 96, 0.32))",
+      prayingFilter: "brightness(1.13) saturate(1.0) drop-shadow(0 0 24px rgba(255, 214, 160, 0.30))"
     }
   };
   var BASE_THEME_LABELS = Object.keys(BASE_THEME_ALTARS);
-  var EXTRA_THEME_LABELS = ["마가 다락방", "요나의 고래뱃속", "모세의 시내산"];
+  var currentActiveTheme = "";
   var fadeTimer = 0;
   var revealTimer = 0;
 
+  function clearAllThemeState() {
+    var oldTheme = currentActiveTheme;
+    
+    // 모든 테마 CSS 클래스 제거
+    [
+      "codex-theme-desert",
+      "codex-theme-gethsemane",
+      "codex-theme-night",
+      "codex-theme-summer",
+      "codex-theme-mark",
+      "codex-theme-jonah",
+      "codex-theme-sinal"
+    ].forEach(function (className) {
+      document.documentElement.classList.remove(className);
+      document.body.classList.remove(className);
+    });
+
+    // 모든 데이터 속성 제거
+    document.body.removeAttribute("data-extra-theme");
+    document.body.removeAttribute("data-theme");
+    document.body.removeAttribute("data-codex-theme-background");
+    
+    // 배경 스타일 초기화
+    var background = findBackgroundNode();
+    if (background) {
+      background.removeAttribute("data-codex-theme-background");
+      background.style.removeProperty("background-image");
+      background.style.removeProperty("background-position");
+      background.style.removeProperty("background-color");
+      background.style.removeProperty("opacity");
+    }
+
+    return oldTheme;
+  }
+
   function text(node) {
     return (node && node.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
+  function isPrayerActive() {
+    return Array.from(document.querySelectorAll("button")).some(function (button) {
+      return text(button).indexOf("기도 중...") !== -1;
+    });
   }
 
   function ensureOverlay() {
@@ -67,7 +140,7 @@
 
   function findThemeFromButton(button) {
     var label = text(button);
-    return BASE_THEME_LABELS.concat(EXTRA_THEME_LABELS).find(function (themeName) {
+    return BASE_THEME_LABELS.find(function (themeName) {
       return label.indexOf(themeName) !== -1;
     }) || "";
   }
@@ -85,9 +158,19 @@
     altar.style.removeProperty("margin-left");
     altar.style.removeProperty("margin-right");
     altar.style.removeProperty("opacity");
-    if (themeName !== "어두운 밤") {
+    updateAltarFilter(themeName);
+  }
+
+  function updateAltarFilter(themeName) {
+    var altar = document.querySelector('img[alt="altar"]');
+    if (!altar) return;
+    var config = BASE_THEME_BACKGROUNDS[themeName];
+    if (!config) return;
+    var filter = isPrayerActive() ? config.prayingFilter : config.waitingFilter;
+    if (filter) {
+      altar.style.filter = filter;
+    } else {
       altar.style.removeProperty("filter");
-      altar.style.removeProperty("transform");
     }
   }
 
@@ -106,7 +189,7 @@
   }
 
   function updateFooterThemeLabel(themeName) {
-    BASE_THEME_LABELS.concat(EXTRA_THEME_LABELS).forEach(function (oldName) {
+    BASE_THEME_LABELS.forEach(function (oldName) {
       Array.from(document.querySelectorAll("#root span, #root div")).forEach(function (node) {
         if (node.closest && node.closest("button")) return;
         if (node.childElementCount) return;
@@ -128,6 +211,7 @@
     var config = BASE_THEME_BACKGROUNDS[themeName];
     if (!config) return;
     document.body.removeAttribute("data-extra-theme");
+    document.body.dataset.currentTheme = themeName;
     document.body.style.backgroundColor = config.color;
     if (!options || !options.silent) {
       document.dispatchEvent(new CustomEvent("codex-extra-theme-change", { detail: { theme: "base" } }));
@@ -150,7 +234,9 @@
     "assets/g_dessert.webp",
     "assets/b_night.webp",
     "assets/b_woods.webp",
-    "assets/b_night_prayer.webp"
+    "assets/b_mark.webp",
+    "assets/b_jonah.webp",
+    "assets/b_sinal.webp"
   ]);
 
   function reloadAltarSrc(altar) {
@@ -192,11 +278,8 @@
   }
 
   function preloadAltarImages() {
-    [
-      BASE_THEME_ALTARS["사막의 제단"],
-      BASE_THEME_ALTARS["어두운 밤"],
-      BASE_THEME_ALTARS["여름 녹음"]
-    ].forEach(function (src) {
+    Object.keys(BASE_THEME_ALTARS).forEach(function (themeName) {
+      var src = BASE_THEME_ALTARS[themeName];
       var image = new Image();
       image.src = src + "?reload=" + Date.now();
     });
@@ -207,7 +290,7 @@
     Array.from(document.querySelectorAll("#root span, #root div")).forEach(function (node) {
       if (node.closest && node.closest("button")) return;
       var value = text(node);
-      if (BASE_THEME_LABELS.concat(EXTRA_THEME_LABELS).indexOf(value) !== -1) footerTheme = value;
+      if (BASE_THEME_LABELS.indexOf(value) !== -1) footerTheme = value;
     });
     var themeClasses = [
       "codex-theme-desert",
@@ -243,6 +326,7 @@
       window.setTimeout(function () {
         applyBaseVisuals(themeName, { silent: true });
         markCurrentTheme();
+        updateAltarFilter(themeName);
       }, delay);
     });
   }
@@ -267,6 +351,11 @@
       } else {
         window.setTimeout(markCurrentTheme, 900);
       }
+
+      window.setTimeout(function () {
+        var currentTheme = document.body.dataset.currentTheme;
+        if (currentTheme) updateAltarFilter(currentTheme);
+      }, 100);
     }, true);
 
     document.addEventListener("codex-extra-theme-change", startFade);
