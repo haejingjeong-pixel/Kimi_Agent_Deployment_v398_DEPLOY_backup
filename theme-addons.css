@@ -1,0 +1,234 @@
+body[data-theme="mark"],
+body[data-theme="jonah"],
+body[data-theme="sinal"] {
+  background-color: var(--theme-bg, #1a120f);
+}
+
+body:not([data-theme="mark"]) #mark-theme-layer,
+body:not([data-theme="jonah"]) #jonah-theme-layer,
+body:not([data-theme="sinal"]) #sinal-theme-layer {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+#mark-theme-layer,
+#jonah-theme-layer,
+#sinal-theme-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1200ms ease;
+}
+
+body[data-theme="mark"] #mark-theme-layer,
+body[data-theme="jonah"] #jonah-theme-layer,
+body[data-theme="sinal"] #sinal-theme-layer {
+  display: block !important;
+  opacity: 1;
+}
+
+#mark-theme-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 74% 42%, rgba(255, 224, 170, 0.25), transparent 34%),
+    linear-gradient(103deg, transparent 42%, rgba(255, 216, 150, 0.13) 50%, rgba(255, 246, 214, 0.14) 59%, transparent 72%),
+    radial-gradient(ellipse at 14% 77%, rgba(255, 155, 74, 0.16), transparent 28%),
+    radial-gradient(ellipse at 86% 78%, rgba(255, 170, 82, 0.14), transparent 26%);
+  mix-blend-mode: screen;
+  animation: markWarmLightBreathe 8s ease-in-out infinite;
+}
+
+#mark-theme-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(62, 43, 33, 0.08), rgba(62, 43, 33, 0.22));
+}
+
+.mark-dust,
+.jonah-particle,
+.sinal-mist {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.mark-dust {
+  width: var(--size);
+  height: var(--size);
+  left: var(--x);
+  top: var(--y);
+  background: rgba(255, 232, 180, 0.72);
+  box-shadow: 0 0 8px rgba(255, 202, 120, 0.34);
+  animation: markDustFloat var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+#jonah-theme-layer::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  background:
+    radial-gradient(ellipse at 45% 30%, rgba(40, 220, 220, 0.20), transparent 28%),
+    linear-gradient(102deg, transparent 31%, rgba(40, 220, 220, 0.16) 39%, rgba(180, 255, 245, 0.12) 48%, transparent 62%),
+    repeating-radial-gradient(ellipse at 50% 22%, rgba(96, 238, 230, 0.11) 0 1px, transparent 2px 17px);
+  filter: blur(0.8px);
+  mix-blend-mode: screen;
+  animation: jonahWaterLight 10s ease-in-out infinite;
+}
+
+#jonah-theme-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 52%, transparent 0%, rgba(1, 13, 18, 0.20) 58%, rgba(1, 13, 18, 0.48) 100%),
+    linear-gradient(180deg, rgba(1, 13, 18, 0.08), rgba(1, 13, 18, 0.32));
+  animation: jonahDarkBreath 13s ease-in-out infinite;
+}
+
+.jonah-particle {
+  width: var(--size);
+  height: var(--size);
+  left: var(--x);
+  top: var(--y);
+  background: rgba(130, 255, 240, 0.45);
+  box-shadow: 0 0 10px rgba(65, 230, 220, 0.32);
+  animation: jonahParticleFloat var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+#sinal-theme-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 54% 36%, rgba(255, 194, 126, 0.24), transparent 20%),
+    linear-gradient(180deg, rgba(210, 235, 255, 0.12), transparent 45%),
+    linear-gradient(96deg, transparent 39%, rgba(255, 234, 190, 0.18) 48%, rgba(210, 235, 255, 0.10) 56%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: sinalHolyLight 9s ease-in-out infinite;
+}
+
+#sinal-theme-layer::after {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background:
+    radial-gradient(ellipse at 26% 70%, rgba(210, 235, 255, 0.24), transparent 38%),
+    radial-gradient(ellipse at 70% 76%, rgba(255, 224, 190, 0.18), transparent 34%),
+    linear-gradient(180deg, transparent 0 48%, rgba(83, 106, 131, 0.20) 70%, rgba(83, 106, 131, 0.34) 100%);
+  filter: blur(12px);
+  animation: sinalCloudDrift 18s ease-in-out infinite;
+}
+
+.sinal-mist {
+  width: var(--w);
+  height: var(--h);
+  left: var(--x);
+  top: var(--y);
+  background: radial-gradient(ellipse, rgba(225, 238, 255, 0.34), transparent 72%);
+  filter: blur(12px);
+  animation: sinalMistMove var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+.sinal-lightning {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(116deg, transparent 39%, rgba(232, 246, 255, 0.32) 40%, transparent 42%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: sinalLightning 11s steps(1, end) infinite;
+}
+
+body[data-theme="mark"] .prayer-verse p,
+body[data-theme="jonah"] .prayer-verse p,
+body[data-theme="sinal"] .prayer-verse p {
+  color: rgba(255, 246, 224, 0.9) !important;
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.66),
+    0 0 22px rgba(255, 236, 190, 0.24) !important;
+}
+
+body[data-theme="jonah"] .prayer-verse p {
+  text-shadow:
+    0 2px 12px rgba(0, 8, 12, 0.82),
+    0 0 24px rgba(80, 245, 230, 0.22) !important;
+}
+
+body[data-theme="sinal"] .prayer-verse p {
+  text-shadow:
+    0 2px 12px rgba(34, 45, 64, 0.68),
+    0 0 26px rgba(255, 222, 178, 0.28) !important;
+}
+
+body[data-theme="mark"] img[alt="altar"],
+body[data-theme="jonah"] img[alt="altar"],
+body[data-theme="sinal"] img[alt="altar"] {
+  width: 82% !important;
+  max-width: 82% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  transition: filter 3.8s ease, opacity 2.4s ease !important;
+}
+
+button[data-codex-theme].codex-theme-active {
+  color: #facc6b !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: inset 0 0 0 1px rgba(250, 204, 107, 0.95);
+}
+
+@keyframes markWarmLightBreathe {
+  0%, 100% { opacity: 0.72; filter: brightness(1); }
+  50% { opacity: 0.94; filter: brightness(1.08); }
+}
+
+@keyframes markDustFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.15; }
+  35% { opacity: 0.62; }
+  70% { transform: translate3d(18px, -34px, 0); opacity: 0.42; }
+}
+
+@keyframes jonahWaterLight {
+  0%, 100% { transform: translate3d(-1%, 0, 0) scale(1); opacity: 0.72; }
+  50% { transform: translate3d(1.5%, 1%, 0) scale(1.03); opacity: 0.92; }
+}
+
+@keyframes jonahDarkBreath {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 0.92; }
+}
+
+@keyframes jonahParticleFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.9); opacity: 0.10; }
+  45% { opacity: 0.58; }
+  75% { transform: translate3d(-14px, -44px, 0) scale(1.1); opacity: 0.34; }
+}
+
+@keyframes sinalHolyLight {
+  0%, 100% { opacity: 0.62; filter: brightness(1); }
+  50% { opacity: 0.86; filter: brightness(1.08); }
+}
+
+@keyframes sinalCloudDrift {
+  0%, 100% { transform: translate3d(-2%, 0, 0); opacity: 0.68; }
+  50% { transform: translate3d(3%, -1%, 0); opacity: 0.86; }
+}
+
+@keyframes sinalMistMove {
+  0%, 100% { transform: translate3d(-22px, 8px, 0) scaleX(1); opacity: 0.18; }
+  50% { transform: translate3d(32px, -12px, 0) scaleX(1.12); opacity: 0.52; }
+}
+
+@keyframes sinalLightning {
+  0%, 82%, 86%, 100% { opacity: 0; }
+  83% { opacity: 0.28; }
+  84% { opacity: 0; }
+  85% { opacity: 0.18; }
+}
