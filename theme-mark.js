@@ -6,9 +6,7 @@
     background: "assets/back_mark.webp",
     altar: "assets/b_mark.webp",
     color: "#3e2b21",
-    position: "center 52%",
-    waitingFilter: "brightness(1.02) saturate(1.02) drop-shadow(0 18px 34px rgba(55, 30, 18, 0.34))",
-    prayingFilter: "brightness(1.12) saturate(1.06) drop-shadow(0 0 22px rgba(255, 190, 105, 0.28))"
+    position: "center 52%"
   };
   var BASE_LABELS = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var active = false;
@@ -16,12 +14,6 @@
 
   function text(node) {
     return (node && node.textContent || "").replace(/\s+/g, " ").trim();
-  }
-
-  function isPrayerActive() {
-    return Array.from(document.querySelectorAll("button")).some(function (button) {
-      return text(button).indexOf("기도 중...") !== -1;
-    });
   }
 
   function findBackgroundNode() {
@@ -73,17 +65,20 @@
       background.style.opacity = "1";
     }
 
-    var prayerActive = isPrayerActive();
     var altar = document.querySelector('img[alt="altar"]');
     if (altar) {
       var reloadSrc = MARK.altar + "?reload=" + Date.now();
       if (altar.getAttribute("src") !== reloadSrc) altar.setAttribute("src", reloadSrc);
       altar.style.removeProperty("transform");
-      altar.style.filter = prayerActive ? MARK.prayingFilter : MARK.waitingFilter;
-      altar.style.width = "88%";
-      altar.style.maxWidth = "88%";
-      altar.style.marginLeft = "auto";
-      altar.style.marginRight = "auto";
+      altar.style.removeProperty("filter");
+      altar.style.removeProperty("width");
+      altar.style.removeProperty("max-width");
+      altar.style.removeProperty("height");
+      altar.style.removeProperty("max-height");
+      altar.style.removeProperty("margin-left");
+      altar.style.removeProperty("margin-right");
+      altar.style.removeProperty("transition");
+      altar.style.removeProperty("animation");
     }
 
     updateBottomLabel();

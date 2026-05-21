@@ -7,27 +7,21 @@
       bg: "assets/back_mark.webp",
       altar: "assets/b_mark.webp",
       color: "#3e2b21",
-      position: "center 52%",
-      waitingFilter: "brightness(1.02) saturate(1.02) drop-shadow(0 18px 34px rgba(55, 30, 18, 0.34))",
-      prayingFilter: "brightness(1.12) saturate(1.06) drop-shadow(0 0 22px rgba(255, 190, 105, 0.28))"
+      position: "center 52%"
     },
     jonah: {
       label: "요나의 고래뱃속",
       bg: "assets/back_jonah.webp",
       altar: "assets/b_jonah.webp",
       color: "#010d12",
-      position: "center 52%",
-      waitingFilter: "brightness(0.92) saturate(0.92) drop-shadow(0 18px 34px rgba(0, 16, 20, 0.46))",
-      prayingFilter: "brightness(1.08) saturate(1.02) drop-shadow(0 0 20px rgba(40, 220, 220, 0.24))"
+      position: "center 52%"
     },
     sinal: {
       label: "모세의 시내산",
       bg: "assets/back_sinal.webp",
       altar: "assets/b_sinal.webp",
       color: "#536a83",
-      position: "center 48%",
-      waitingFilter: "brightness(1.0) saturate(0.95) drop-shadow(0 18px 34px rgba(50, 70, 96, 0.32))",
-      prayingFilter: "brightness(1.13) saturate(1.0) drop-shadow(0 0 24px rgba(255, 214, 160, 0.30))"
+      position: "center 48%"
     }
   };
 
@@ -110,12 +104,6 @@
     });
   }
 
-  function isPrayerActive() {
-    return Array.from(document.querySelectorAll("button")).some(function (button) {
-      return getText(button).indexOf("기도 중...") !== -1;
-    });
-  }
-
   function updateThemeLabels(label) {
     Array.from(document.querySelectorAll("#root span, #root div")).forEach(function (node) {
       if (node.closest && node.closest("button")) return;
@@ -152,11 +140,15 @@
       var reloadSrc = config.altar + "?reload=" + Date.now();
       if (altar.getAttribute("src") !== reloadSrc) altar.setAttribute("src", reloadSrc);
       altar.style.removeProperty("transform");
-      altar.style.filter = isPrayerActive() ? config.prayingFilter : config.waitingFilter;
-      altar.style.width = "82%";
-      altar.style.maxWidth = "82%";
-      altar.style.marginLeft = "auto";
-      altar.style.marginRight = "auto";
+      altar.style.removeProperty("filter");
+      altar.style.removeProperty("width");
+      altar.style.removeProperty("max-width");
+      altar.style.removeProperty("height");
+      altar.style.removeProperty("max-height");
+      altar.style.removeProperty("margin-left");
+      altar.style.removeProperty("margin-right");
+      altar.style.removeProperty("transition");
+      altar.style.removeProperty("animation");
     }
 
     updateThemeLabels(config.label);

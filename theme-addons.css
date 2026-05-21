@@ -171,11 +171,20 @@ body[data-theme="sinal"] .prayer-verse p {
 body[data-theme="mark"] img[alt="altar"],
 body[data-theme="jonah"] img[alt="altar"],
 body[data-theme="sinal"] img[alt="altar"] {
-  width: 82% !important;
-  max-width: 82% !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  transition: filter 3.8s ease, opacity 2.4s ease !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 291px !important;
+  min-height: 291px !important;
+  max-height: 291px !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+  aspect-ratio: auto !important;
+  transform: translateY(-4px) !important;
+  transition: none !important;
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 button[data-codex-theme].codex-theme-active {

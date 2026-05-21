@@ -14,57 +14,42 @@
     "사막의 제단": {
       image: "assets/back_dessert.webp",
       color: "#b77c61",
-      position: "center",
-      waitingFilter: "none",
-      prayingFilter: "none"
+      position: "center"
     },
     "겟세마네 동산": {
       image: "assets/back_gathe3.webp",
       color: "#000000",
-      position: "center 25%",
-      waitingFilter: "none",
-      prayingFilter: "none"
+      position: "center 25%"
     },
     "어두운 밤": {
       image: "assets/back_night.webp",
       color: "#000114",
-      position: "center",
-      waitingFilter: "brightness(0.52) saturate(0.86) contrast(0.96) drop-shadow(0 24px 28px rgba(0, 0, 0, 0.58))",
-      prayingFilter: "brightness(1.04) saturate(1.04) contrast(1.03) drop-shadow(0 0 16px rgba(176, 196, 255, 0.16)) drop-shadow(0 22px 24px rgba(0, 0, 0, 0.34))"
+      position: "center"
     },
     "여름 녹음": {
       image: "assets/back_woods7.webp",
       color: "#091c1f",
-      position: "center 70%",
-      waitingFilter: "brightness(0.74) saturate(0.88) contrast(0.98) drop-shadow(0 22px 28px rgba(0, 0, 0, 0.42))",
-      prayingFilter: "brightness(0.84) saturate(0.96) contrast(1.02) drop-shadow(0 0 20px rgba(100, 200, 100, 0.20)) drop-shadow(0 24px 32px rgba(0, 0, 0, 0.28))"
+      position: "center 70%"
     },
     "마가 다락방": {
       image: "assets/back_mark.webp",
       color: "#3e2b21",
-      position: "center 52%",
-      waitingFilter: "brightness(1.02) saturate(1.02) drop-shadow(0 18px 34px rgba(55, 30, 18, 0.34))",
-      prayingFilter: "brightness(1.12) saturate(1.06) drop-shadow(0 0 22px rgba(255, 190, 105, 0.28))"
+      position: "center 52%"
     },
     "요나의 고래뱃속": {
       image: "assets/back_jonah.webp",
       color: "#010d12",
-      position: "center 52%",
-      waitingFilter: "brightness(0.92) saturate(0.92) drop-shadow(0 18px 34px rgba(0, 16, 20, 0.46))",
-      prayingFilter: "brightness(1.08) saturate(1.02) drop-shadow(0 0 20px rgba(40, 220, 220, 0.24))"
+      position: "center 52%"
     },
     "모세의 시내산": {
       image: "assets/back_sinal.webp",
       color: "#536a83",
-      position: "center 48%",
-      waitingFilter: "brightness(1.0) saturate(0.95) drop-shadow(0 18px 34px rgba(50, 70, 96, 0.32))",
-      prayingFilter: "brightness(1.13) saturate(1.0) drop-shadow(0 0 24px rgba(255, 214, 160, 0.30))"
+      position: "center 48%"
     }
   };
   var BASE_THEME_LABELS = Object.keys(BASE_THEME_ALTARS);
   var currentActiveTheme = "";
   var fadeTimer = 0;
-  var revealTimer = 0;
 
   function clearAllThemeState() {
     var oldTheme = currentActiveTheme;
@@ -105,12 +90,6 @@
     return (node && node.textContent || "").replace(/\s+/g, " ").trim();
   }
 
-  function isPrayerActive() {
-    return Array.from(document.querySelectorAll("button")).some(function (button) {
-      return text(button).indexOf("기도 중...") !== -1;
-    });
-  }
-
   function ensureOverlay() {
     if (document.getElementById("codex-theme-transition")) return;
     var overlay = document.createElement("div");
@@ -122,16 +101,8 @@
   function startFade() {
     ensureOverlay();
     document.body.classList.remove("codex-theme-transitioning");
-    document.body.classList.remove("codex-altar-revealing");
     void document.body.offsetWidth;
     document.body.classList.add("codex-theme-transitioning");
-    window.clearTimeout(revealTimer);
-    revealTimer = window.setTimeout(function () {
-      document.body.classList.add("codex-altar-revealing");
-      revealTimer = window.setTimeout(function () {
-        document.body.classList.remove("codex-altar-revealing");
-      }, 1050);
-    }, 220);
     window.clearTimeout(fadeTimer);
     fadeTimer = window.setTimeout(function () {
       document.body.classList.remove("codex-theme-transitioning");
@@ -153,25 +124,42 @@
     markAltarStage();
     var reloadSrc = src + "?reload=" + Date.now();
     if (altar.getAttribute("src") !== reloadSrc) altar.setAttribute("src", reloadSrc);
-    altar.style.removeProperty("width");
-    altar.style.removeProperty("max-width");
-    altar.style.removeProperty("margin-left");
-    altar.style.removeProperty("margin-right");
-    altar.style.removeProperty("opacity");
+    sanitizeAltarStyles(altar);
     updateAltarFilter(themeName);
   }
 
   function updateAltarFilter(themeName) {
     var altar = document.querySelector('img[alt="altar"]');
     if (!altar) return;
-    var config = BASE_THEME_BACKGROUNDS[themeName];
-    if (!config) return;
-    var filter = isPrayerActive() ? config.prayingFilter : config.waitingFilter;
-    if (filter) {
-      altar.style.filter = filter;
-    } else {
-      altar.style.removeProperty("filter");
-    }
+    altar.style.removeProperty("filter");
+  }
+
+  function sanitizeAltarStyles(altar) {
+    if (!altar) return;
+    [
+      "width",
+      "max-width",
+      "height",
+      "max-height",
+      "min-width",
+      "min-height",
+      "margin",
+      "margin-left",
+      "margin-right",
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "translate",
+      "transform",
+      "scale",
+      "transition",
+      "animation",
+      "opacity",
+      "filter"
+    ].forEach(function (property) {
+      altar.style.removeProperty(property);
+    });
   }
 
   function markAltarStage() {
@@ -249,6 +237,7 @@
   }
 
   function bindAltarSrcObserver() {
+    sanitizeAltarStyles(document.querySelector('img[alt="altar"]'));
     reloadAltarSrc(document.querySelector('img[alt="altar"]'));
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
@@ -258,13 +247,23 @@
             reloadAltarSrc(target);
           }
         }
+        if (mutation.type === "attributes" && mutation.attributeName === "style") {
+          var styleTarget = mutation.target;
+          if (styleTarget.matches && styleTarget.matches('img[alt="altar"]')) {
+            sanitizeAltarStyles(styleTarget);
+          }
+        }
         if (mutation.type === "childList") {
           Array.from(mutation.addedNodes).forEach(function (node) {
             if (node.nodeType !== 1) return;
             if (node.matches && node.matches('img[alt="altar"]')) {
+              sanitizeAltarStyles(node);
               reloadAltarSrc(node);
             }
-            Array.from(node.querySelectorAll ? node.querySelectorAll('img[alt="altar"]') : []).forEach(reloadAltarSrc);
+            Array.from(node.querySelectorAll ? node.querySelectorAll('img[alt="altar"]') : []).forEach(function (altar) {
+              sanitizeAltarStyles(altar);
+              reloadAltarSrc(altar);
+            });
           });
         }
       });
@@ -273,7 +272,7 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["src"]
+      attributeFilter: ["src", "style"]
     });
   }
 

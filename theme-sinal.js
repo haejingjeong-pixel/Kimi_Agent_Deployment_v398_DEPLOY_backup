@@ -6,9 +6,7 @@
     background: "assets/back_sinal.webp",
     altar: "assets/b_sinal.webp",
     color: "#536a83",
-    position: "center 52%",
-    waitingFilter: "brightness(0.92) saturate(0.96) contrast(1) drop-shadow(0 22px 42px rgba(24, 34, 48, 0.62))",
-    prayingFilter: "brightness(1.03) saturate(1.04) contrast(1.02) drop-shadow(0 0 24px rgba(255, 224, 158, 0.30))"
+    position: "center 52%"
   };
   var BASE_LABELS = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var active = false;
@@ -92,11 +90,15 @@
       var reloadSrc = SINAL.altar + "?reload=" + Date.now();
       if (altar.getAttribute("src") !== reloadSrc) altar.setAttribute("src", reloadSrc);
       altar.style.removeProperty("transform");
-      altar.style.filter = prayerActive ? SINAL.prayingFilter : SINAL.waitingFilter;
-      altar.style.width = "88%";
-      altar.style.maxWidth = "88%";
-      altar.style.marginLeft = "auto";
-      altar.style.marginRight = "auto";
+      altar.style.removeProperty("filter");
+      altar.style.removeProperty("width");
+      altar.style.removeProperty("max-width");
+      altar.style.removeProperty("height");
+      altar.style.removeProperty("max-height");
+      altar.style.removeProperty("margin-left");
+      altar.style.removeProperty("margin-right");
+      altar.style.removeProperty("transition");
+      altar.style.removeProperty("animation");
     }
 
     var layer = document.getElementById("sinal-theme-soft-layer");
