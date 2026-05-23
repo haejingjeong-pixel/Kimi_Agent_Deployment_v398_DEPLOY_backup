@@ -28,6 +28,11 @@
   var baseThemeLabels = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var activeExtraTheme = "";
   var seeded = false;
+  var themeClassByExtraTheme = {
+    mark: "codex-theme-mark",
+    jonah: "codex-theme-jonah",
+    sinal: "codex-theme-sinal"
+  };
 
   function ready(fn) {
     if (document.readyState === "loading") {
@@ -167,7 +172,39 @@
   function updateMenuActive(theme) {
     Array.from(document.querySelectorAll("button[data-codex-theme]")).forEach(function (button) {
       button.classList.toggle("codex-theme-active", button.dataset.codexTheme === theme);
+      button.toggleAttribute("aria-current", button.dataset.codexTheme === theme);
     });
+    if (!theme) return;
+    Array.from(document.querySelectorAll("button")).forEach(function (button) {
+      if (button.dataset.codexTheme) return;
+      var label = getText(button);
+      if (!baseThemeLabels.some(function (themeLabel) { return label.indexOf(themeLabel) !== -1; })) return;
+      button.classList.remove("bg-white/20", "text-amber-300");
+      button.classList.add("text-white/70", "hover:bg-white/10", "hover:text-white");
+      Array.from(button.querySelectorAll("div")).forEach(function (node) {
+        var className = typeof node.className === "string" ? node.className : "";
+        if (className.indexOf("bg-amber-400") !== -1) node.remove();
+      });
+    });
+  }
+
+  function markExtraThemeClass(theme) {
+    Object.keys(themeClassByExtraTheme).forEach(function (key) {
+      document.body.classList.toggle(themeClassByExtraTheme[key], key === theme);
+    });
+  }
+
+  function closeThemeMenuSoon(sourceButton) {
+    var menu = sourceButton && sourceButton.parentElement;
+    var wrapper = menu && menu.parentElement;
+    if (!wrapper) return;
+    var toggle = Array.from(wrapper.children).find(function (node) {
+      return node.tagName === "BUTTON" && !node.dataset.codexTheme && getText(node).length === 0;
+    });
+    if (!toggle) return;
+    window.setTimeout(function () {
+      toggle.click();
+    }, 40);
   }
 
   function applyExtraTheme(theme) {
@@ -175,6 +212,9 @@
     if (!config) return;
     activeExtraTheme = theme;
     document.body.dataset.theme = theme;
+    document.body.dataset.currentTheme = config.label;
+    document.body.removeAttribute("data-extra-theme");
+    markExtraThemeClass(theme);
     document.body.style.backgroundColor = config.color;
 
     var background = findBackgroundNode();
@@ -218,6 +258,7 @@
   function clearExtraThemeSoon() {
     activeExtraTheme = "";
     updateMenuActive("");
+    markExtraThemeClass("");
     document.body.removeAttribute("data-theme");
     document.body.style.backgroundColor = "";
     window.setTimeout(function () {
@@ -251,6 +292,7 @@
       event.preventDefault();
       event.stopPropagation();
       applyExtraTheme(theme);
+      closeThemeMenuSoon(button);
     });
     return button;
   }
@@ -299,6 +341,7 @@
     if (root) {
       new MutationObserver(function () {
         syncPrayerState();
+        updateMenuActive(activeExtraTheme);
         if (activeExtraTheme === "jonah") syncJonahRippleAnchor();
       }).observe(root, { childList: true, subtree: true, characterData: true });
     }
