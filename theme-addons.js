@@ -292,6 +292,7 @@
       event.preventDefault();
       event.stopPropagation();
       applyExtraTheme(theme);
+      document.dispatchEvent(new CustomEvent("codex-bgm-theme-change", { detail: { theme: theme } }));
       closeThemeMenuSoon(button);
     });
     return button;
