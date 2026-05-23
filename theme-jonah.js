@@ -5,8 +5,8 @@
     label: "요나의 고래뱃속",
     background: "assets/back_jonah.webp",
     altar: "assets/b_jonah.webp",
-    color: "#010d12",
-    position: "center 52%"
+    color: "#000204",
+    position: "center calc(50% - 8vh)"
   };
   var BASE_LABELS = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var active = false;
@@ -39,10 +39,11 @@
       layer.appendChild(particle);
     }
     [
-      { x: "50%", y: "55%", w: "170px", h: "30px", r: "-3deg", sx: "1.05", o: "0.15", dx: "-8px", dy: "2px", dr: "1deg", d: "10.5s", delay: "-2s" },
-      { x: "50%", y: "60%", w: "250px", h: "42px", r: "2deg", sx: "1.15", o: "0.20", dx: "10px", dy: "4px", dr: "-2deg", d: "12.5s", delay: "-6s" },
-      { x: "50%", y: "66%", w: "360px", h: "58px", r: "-5deg", sx: "1.22", o: "0.22", dx: "-14px", dy: "8px", dr: "3deg", d: "14s", delay: "-9s" },
-      { x: "50%", y: "73%", w: "500px", h: "82px", r: "4deg", sx: "1.32", o: "0.18", dx: "18px", dy: "10px", dr: "-3deg", d: "15.5s", delay: "-4s" }
+      { x: "0px", y: "0px", w: "420px", h: "82px", r: "-17deg", sx: "1.72", o: "0.12", dx: "-54px", dy: "24px", dr: "-5deg", d: "18s", delay: "-4s" },
+      { x: "0px", y: "0px", w: "560px", h: "106px", r: "-11deg", sx: "1.95", o: "0.10", dx: "42px", dy: "18px", dr: "4deg", d: "23s", delay: "-11s" },
+      { x: "0px", y: "0px", w: "640px", h: "124px", r: "-22deg", sx: "2.12", o: "0.09", dx: "-72px", dy: "32px", dr: "-6deg", d: "27s", delay: "-17s" },
+      { x: "0px", y: "0px", w: "500px", h: "98px", r: "9deg", sx: "1.62", o: "0.08", dx: "62px", dy: "-8px", dr: "5deg", d: "25s", delay: "-7s" },
+      { x: "0px", y: "0px", w: "780px", h: "148px", r: "-7deg", sx: "2.28", o: "0.07", dx: "28px", dy: "38px", dr: "3deg", d: "31s", delay: "-21s" }
     ].forEach(function (config) {
       var ripple = document.createElement("span");
       ripple.className = "jonah-water-ripple";
@@ -61,6 +62,27 @@
       layer.appendChild(ripple);
     });
     document.body.insertBefore(layer, document.getElementById("root"));
+  }
+
+  function syncJonahRippleAnchor() {
+    var layer = document.getElementById("jonah-theme-soft-layer");
+    var altar = document.querySelector('img[alt="altar"]');
+    if (!layer || !altar) return;
+    var rect = altar.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    layer.style.setProperty("--altar-x", (rect.left + rect.width / 2).toFixed(2) + "px");
+    layer.style.setProperty("--altar-y", (rect.top + rect.height * 0.38).toFixed(2) + "px");
+  }
+
+  function isPrayerActive() {
+    return Array.from(document.querySelectorAll("button")).some(function (button) {
+      var label = text(button);
+      return label.indexOf("기도 중") !== -1 || label.indexOf("기도중") !== -1;
+    });
+  }
+
+  function syncPrayerState() {
+    document.body.dataset.prayerState = isPrayerActive() ? "praying" : "waiting";
   }
 
   function updateBottomLabel() {
@@ -103,6 +125,10 @@
       altar.style.removeProperty("animation");
     }
 
+    syncJonahRippleAnchor();
+    syncPrayerState();
+    window.setTimeout(syncJonahRippleAnchor, 80);
+    window.setTimeout(syncJonahRippleAnchor, 260);
     updateBottomLabel();
     Array.from(document.querySelectorAll("button[data-jonah-theme]")).forEach(function (button) {
       button.classList.toggle("jonah-theme-active", active);
@@ -167,6 +193,9 @@
 
   function start() {
     ensureLayer();
+    syncJonahRippleAnchor();
+    syncPrayerState();
+    window.addEventListener("resize", syncJonahRippleAnchor);
     scheduleInject();
     if (window.location.search.indexOf("jonah") !== -1) {
       [160, 700, 1400, 2600].forEach(function (delay) {
@@ -186,14 +215,17 @@
       if (label.length < 2 || label === "CCM") {
         scheduleInject();
       }
+      window.setTimeout(syncPrayerState, 40);
+      window.setTimeout(syncPrayerState, 240);
     }, true);
     document.addEventListener("codex-extra-theme-change", function (event) {
       if (!event.detail || event.detail.theme !== "jonah") clearJonah();
     });
     new MutationObserver(function () {
+      syncPrayerState();
       scheduleInject();
       if (active) applyJonah();
-    }).observe(document.getElementById("root"), { childList: true, subtree: true });
+    }).observe(document.getElementById("root"), { childList: true, subtree: true, characterData: true });
     window.setInterval(function () {
       if (active) applyJonah();
     }, 900);

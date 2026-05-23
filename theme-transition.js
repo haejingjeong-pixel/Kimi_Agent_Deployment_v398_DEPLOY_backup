@@ -38,13 +38,13 @@
     },
     "요나의 고래뱃속": {
       image: "assets/back_jonah.webp",
-      color: "#010d12",
-      position: "center 52%"
+      color: "#000204",
+      position: "center calc(50% - 8vh)"
     },
     "모세의 시내산": {
       image: "assets/back_sinal.webp",
       color: "#536a83",
-      position: "center 48%"
+      position: "center calc(50% - 30vh)"
     }
   };
   var BASE_THEME_LABELS = Object.keys(BASE_THEME_ALTARS);

@@ -6,7 +6,7 @@
     background: "assets/back_sinal.webp",
     altar: "assets/b_sinal.webp",
     color: "#536a83",
-    position: "center 52%"
+    position: "center calc(50% - 30vh)"
   };
   var BASE_LABELS = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var active = false;

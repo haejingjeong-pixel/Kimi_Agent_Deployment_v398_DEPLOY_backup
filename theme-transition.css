@@ -38,6 +38,24 @@ body.codex-theme-summer .summer-waiting-dim {
   100% { opacity: 0; }
 }
 
+@keyframes codexSlowShootingStar {
+  0%, 72%, 100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(var(--star-rot));
+  }
+  77% {
+    opacity: 0.58;
+  }
+  88% {
+    opacity: 0.14;
+    transform: translate3d(-420px, 170px, 0) rotate(var(--star-rot));
+  }
+  92% {
+    opacity: 0;
+    transform: translate3d(-560px, 230px, 0) rotate(var(--star-rot));
+  }
+}
+
 .darknight-waiting-dim,
 .night-praying-depth {
   position: absolute;
@@ -54,6 +72,46 @@ body.codex-theme-summer .summer-waiting-dim {
 .night-praying-depth {
   z-index: 10;
   background: rgba(0, 0, 0, 0.10);
+}
+
+.night-shooting-stars {
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  background: none !important;
+  animation: none !important;
+}
+
+.night-shooting-stars::before,
+.night-shooting-stars::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 1px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(245, 252, 255, 0.84), rgba(155, 190, 255, 0.16), transparent);
+  box-shadow: 0 0 12px rgba(200, 224, 255, 0.34);
+  transform: translate3d(0, 0, 0) rotate(var(--star-rot));
+  animation: codexSlowShootingStar var(--star-duration) cubic-bezier(0.42, 0, 0.2, 1) infinite !important;
+}
+
+.night-shooting-stars::before {
+  --star-rot: 28deg;
+  --star-duration: 22s;
+  top: 18%;
+  left: 72%;
+  animation-delay: -5s !important;
+}
+
+.night-shooting-stars::after {
+  --star-rot: 31deg;
+  --star-duration: 29s;
+  top: 35%;
+  left: 84%;
+  width: 140px;
+  animation-delay: -18s !important;
 }
 
 /* Authoritative shared altar geometry.
@@ -150,4 +208,12 @@ body.night-theme-active img[alt="altar"] {
   mask-image: none !important;
   background: transparent !important;
   overflow: visible !important;
+}
+
+body[data-theme="jonah"][data-prayer-state="waiting"] img[alt="altar"] {
+  filter: brightness(0.72) saturate(0.92) !important;
+}
+
+body[data-theme="jonah"][data-prayer-state="praying"] img[alt="altar"] {
+  filter: none !important;
 }

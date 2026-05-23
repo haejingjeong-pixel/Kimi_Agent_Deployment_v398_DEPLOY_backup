@@ -13,15 +13,15 @@
       label: "요나의 고래뱃속",
       bg: "assets/back_jonah.webp",
       altar: "assets/b_jonah.webp",
-      color: "#010d12",
-      position: "center 52%"
+      color: "#000204",
+      position: "center calc(50% - 8vh)"
     },
     sinal: {
       label: "모세의 시내산",
       bg: "assets/back_sinal.webp",
       altar: "assets/b_sinal.webp",
       color: "#536a83",
-      position: "center 48%"
+      position: "center calc(50% - 30vh)"
     }
   };
 
@@ -90,6 +90,56 @@
     }
   }
 
+  function seedJonahRipples() {
+    var layer = document.getElementById("jonah-theme-layer");
+    if (!layer || layer.dataset.ripplesSeeded === "true") return;
+    layer.dataset.ripplesSeeded = "true";
+    [
+      { x: "0px", y: "0px", w: "420px", h: "82px", r: "-17deg", sx: "1.72", o: "0.12", dx: "-54px", dy: "24px", dr: "-5deg", d: "18s", delay: "-4s" },
+      { x: "0px", y: "0px", w: "560px", h: "106px", r: "-11deg", sx: "1.95", o: "0.10", dx: "42px", dy: "18px", dr: "4deg", d: "23s", delay: "-11s" },
+      { x: "0px", y: "0px", w: "640px", h: "124px", r: "-22deg", sx: "2.12", o: "0.09", dx: "-72px", dy: "32px", dr: "-6deg", d: "27s", delay: "-17s" },
+      { x: "0px", y: "0px", w: "500px", h: "98px", r: "9deg", sx: "1.62", o: "0.08", dx: "62px", dy: "-8px", dr: "5deg", d: "25s", delay: "-7s" },
+      { x: "0px", y: "0px", w: "780px", h: "148px", r: "-7deg", sx: "2.28", o: "0.07", dx: "28px", dy: "38px", dr: "3deg", d: "31s", delay: "-21s" }
+    ].forEach(function (config) {
+      var ripple = document.createElement("span");
+      ripple.className = "jonah-depth-ripple";
+      ripple.style.setProperty("--x", config.x);
+      ripple.style.setProperty("--y", config.y);
+      ripple.style.setProperty("--w", config.w);
+      ripple.style.setProperty("--h", config.h);
+      ripple.style.setProperty("--r", config.r);
+      ripple.style.setProperty("--sx", config.sx);
+      ripple.style.setProperty("--o", config.o);
+      ripple.style.setProperty("--dx", config.dx);
+      ripple.style.setProperty("--dy", config.dy);
+      ripple.style.setProperty("--dr", config.dr);
+      ripple.style.setProperty("--duration", config.d);
+      ripple.style.setProperty("--delay", config.delay);
+      layer.appendChild(ripple);
+    });
+  }
+
+  function syncJonahRippleAnchor() {
+    var layer = document.getElementById("jonah-theme-layer");
+    var altar = document.querySelector('img[alt="altar"]');
+    if (!layer || !altar) return;
+    var rect = altar.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    layer.style.setProperty("--altar-x", (rect.left + rect.width / 2).toFixed(2) + "px");
+    layer.style.setProperty("--altar-y", (rect.top + rect.height * 0.38).toFixed(2) + "px");
+  }
+
+  function isPrayerActive() {
+    return Array.from(document.querySelectorAll("button")).some(function (button) {
+      var label = getText(button);
+      return label.indexOf("기도 중") !== -1 || label.indexOf("기도중") !== -1;
+    });
+  }
+
+  function syncPrayerState() {
+    document.body.dataset.prayerState = isPrayerActive() ? "praying" : "waiting";
+  }
+
   function seedEffects() {
     if (seeded) return;
     seeded = true;
@@ -99,6 +149,7 @@
     seedLayer("jonah-theme-layer", "jonah-particle", 28, {
       xMin: 10, xMax: 90, yMin: 16, yMax: 86, sizeMin: 1.5, sizeMax: 4.2, durationMin: 11, durationMax: 21, delayMax: 14
     });
+    seedJonahRipples();
     seedLayer("sinal-theme-layer", "sinal-mist", 5, {
       xMin: 0, xMax: 86, yMin: 50, yMax: 82, sizeMin: 1, sizeMax: 2, durationMin: 15, durationMax: 26, delayMax: 12, widthMin: 180, widthMax: 340, heightMin: 56, heightMax: 110
     });
@@ -153,6 +204,12 @@
 
     updateThemeLabels(config.label);
     updateMenuActive(theme);
+    syncPrayerState();
+    if (theme === "jonah") {
+      syncJonahRippleAnchor();
+      window.setTimeout(syncJonahRippleAnchor, 80);
+      window.setTimeout(syncJonahRippleAnchor, 260);
+    }
     window.setTimeout(function () {
       if (activeExtraTheme === theme) applyExtraTheme(theme);
     }, 160);
@@ -221,6 +278,9 @@
   ready(function () {
     createLayers();
     seedEffects();
+    syncJonahRippleAnchor();
+    syncPrayerState();
+    window.addEventListener("resize", syncJonahRippleAnchor);
     scheduleMenuInjection();
     document.addEventListener("click", function (event) {
       var button = event.target && event.target.closest ? event.target.closest("button") : null;
@@ -232,6 +292,15 @@
       if (label.length < 2 || label === "CCM") {
         scheduleMenuInjection();
       }
+      window.setTimeout(syncPrayerState, 40);
+      window.setTimeout(syncPrayerState, 240);
     });
+    var root = document.getElementById("root");
+    if (root) {
+      new MutationObserver(function () {
+        syncPrayerState();
+        if (activeExtraTheme === "jonah") syncJonahRippleAnchor();
+      }).observe(root, { childList: true, subtree: true, characterData: true });
+    }
   });
 })();

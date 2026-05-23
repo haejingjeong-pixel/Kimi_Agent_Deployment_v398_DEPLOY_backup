@@ -23,6 +23,10 @@ body:not([data-theme="sinal"]) #sinal-theme-layer {
   transition: opacity 1200ms ease;
 }
 
+#jonah-theme-layer {
+  z-index: 9;
+}
+
 body[data-theme="mark"] #mark-theme-layer,
 body[data-theme="jonah"] #jonah-theme-layer,
 body[data-theme="sinal"] #sinal-theme-layer {
@@ -72,14 +76,17 @@ body[data-theme="sinal"] #sinal-theme-layer {
 #jonah-theme-layer::before {
   content: "";
   position: absolute;
-  inset: -8%;
+  inset: -12%;
   background:
-    radial-gradient(ellipse at 45% 30%, rgba(40, 220, 220, 0.20), transparent 28%),
-    linear-gradient(102deg, transparent 31%, rgba(40, 220, 220, 0.16) 39%, rgba(180, 255, 245, 0.12) 48%, transparent 62%),
-    repeating-radial-gradient(ellipse at 50% 22%, rgba(96, 238, 230, 0.11) 0 1px, transparent 2px 17px);
-  filter: blur(0.8px);
+    radial-gradient(ellipse at 36% 48%, rgba(48, 226, 220, 0.20), transparent 31%),
+    radial-gradient(ellipse at 72% 68%, rgba(24, 160, 184, 0.14), transparent 28%),
+    linear-gradient(126deg, transparent 24%, rgba(40, 220, 220, 0.13) 38%, rgba(180, 255, 245, 0.11) 49%, transparent 67%),
+    repeating-radial-gradient(ellipse at 38% 56%, rgba(96, 238, 230, 0.09) 0 1px, transparent 2px 20px);
+  filter: blur(1px);
   mix-blend-mode: screen;
-  animation: jonahWaterLight 10s ease-in-out infinite;
+  transform: rotate(-8deg) scaleX(1.18);
+  animation: jonahWaterLight 18s ease-in-out infinite;
+  display: none;
 }
 
 #jonah-theme-layer::after {
@@ -87,9 +94,20 @@ body[data-theme="sinal"] #sinal-theme-layer {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 52%, transparent 0%, rgba(1, 13, 18, 0.20) 58%, rgba(1, 13, 18, 0.48) 100%),
-    linear-gradient(180deg, rgba(1, 13, 18, 0.08), rgba(1, 13, 18, 0.32));
-  animation: jonahDarkBreath 13s ease-in-out infinite;
+    radial-gradient(ellipse at 42% 58%, rgba(1, 13, 18, 0.08) 0%, rgba(1, 13, 18, 0.28) 52%, rgba(1, 13, 18, 0.58) 100%),
+    linear-gradient(156deg, rgba(1, 13, 18, 0.12), rgba(1, 13, 18, 0.32) 54%, rgba(1, 13, 18, 0.50));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  opacity: 1;
+  transition: opacity 900ms ease;
+  animation: jonahDarkBreath 20s ease-in-out infinite;
+}
+
+body[data-theme="jonah"][data-prayer-state="praying"] #jonah-theme-layer::after {
+  opacity: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: none;
 }
 
 .jonah-particle {
@@ -101,6 +119,28 @@ body[data-theme="sinal"] #sinal-theme-layer {
   box-shadow: 0 0 10px rgba(65, 230, 220, 0.32);
   animation: jonahParticleFloat var(--duration) ease-in-out infinite;
   animation-delay: var(--delay);
+}
+
+.jonah-depth-ripple {
+  position: absolute;
+  left: calc(var(--altar-x, 50vw) + var(--x));
+  top: calc(var(--altar-y, 72vh) + var(--y));
+  width: var(--w);
+  height: var(--h);
+  border-radius: 999px;
+  border: 1px solid rgba(145, 255, 244, 0.13);
+  box-shadow:
+    0 0 18px rgba(90, 240, 230, 0.10),
+    inset 0 0 22px rgba(120, 255, 245, 0.045);
+  filter: blur(1.4px);
+  transform: translate(-50%, -50%) rotate(var(--r)) scaleX(var(--sx)) scale(0.68);
+  transform-origin: center center;
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  animation: jonahDepthRipple var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+  display: none;
 }
 
 #sinal-theme-layer::before {
@@ -187,6 +227,14 @@ body[data-theme="sinal"] img[alt="altar"] {
   filter: none !important;
 }
 
+body[data-theme="jonah"][data-prayer-state="waiting"] img[alt="altar"] {
+  filter: brightness(0.72) saturate(0.92) !important;
+}
+
+body[data-theme="jonah"][data-prayer-state="praying"] img[alt="altar"] {
+  filter: none !important;
+}
+
 button[data-codex-theme].codex-theme-active {
   color: #facc6b !important;
   background: rgba(255, 255, 255, 0.16) !important;
@@ -205,8 +253,8 @@ button[data-codex-theme].codex-theme-active {
 }
 
 @keyframes jonahWaterLight {
-  0%, 100% { transform: translate3d(-1%, 0, 0) scale(1); opacity: 0.72; }
-  50% { transform: translate3d(1.5%, 1%, 0) scale(1.03); opacity: 0.92; }
+  0%, 100% { transform: translate3d(-2%, 1%, 0) rotate(-8deg) scaleX(1.18); opacity: 0.66; }
+  50% { transform: translate3d(2%, -1%, 0) rotate(-5deg) scaleX(1.24); opacity: 0.88; }
 }
 
 @keyframes jonahDarkBreath {
@@ -218,6 +266,23 @@ button[data-codex-theme].codex-theme-active {
   0%, 100% { transform: translate3d(0, 0, 0) scale(0.9); opacity: 0.10; }
   45% { opacity: 0.58; }
   75% { transform: translate3d(-14px, -44px, 0) scale(1.1); opacity: 0.34; }
+}
+
+@keyframes jonahDepthRipple {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--r)) scaleX(var(--sx)) scale(0.46);
+  }
+  24% {
+    opacity: var(--o);
+  }
+  58% {
+    opacity: 0.06;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(calc(var(--r) + var(--dr))) scaleX(var(--sx)) scale(1.24);
+  }
 }
 
 @keyframes sinalHolyLight {
