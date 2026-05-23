@@ -149,14 +149,14 @@
     if (seeded) return;
     seeded = true;
     seedLayer("mark-theme-layer", "mark-dust", 24, {
-      xMin: 12, xMax: 88, yMin: 18, yMax: 78, sizeMin: 1.4, sizeMax: 3.3, durationMin: 9, durationMax: 16, delayMax: 10
+      xMin: 12, xMax: 88, yMin: 18, yMax: 78, sizeMin: 1.4, sizeMax: 3.3, durationMin: 18, durationMax: 30, delayMax: 18
     });
     seedLayer("jonah-theme-layer", "jonah-particle", 28, {
-      xMin: 10, xMax: 90, yMin: 16, yMax: 86, sizeMin: 1.5, sizeMax: 4.2, durationMin: 11, durationMax: 21, delayMax: 14
+      xMin: 10, xMax: 90, yMin: 16, yMax: 86, sizeMin: 1.5, sizeMax: 4.2, durationMin: 22, durationMax: 38, delayMax: 24
     });
     seedJonahRipples();
     seedLayer("sinal-theme-layer", "sinal-mist", 5, {
-      xMin: 0, xMax: 86, yMin: 50, yMax: 82, sizeMin: 1, sizeMax: 2, durationMin: 15, durationMax: 26, delayMax: 12, widthMin: 180, widthMax: 340, heightMin: 56, heightMax: 110
+      xMin: 0, xMax: 86, yMin: 50, yMax: 82, sizeMin: 1, sizeMax: 2, durationMin: 28, durationMax: 46, delayMax: 24, widthMin: 180, widthMax: 340, heightMin: 56, heightMax: 110
     });
   }
 

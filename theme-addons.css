@@ -44,7 +44,7 @@ body[data-theme="sinal"] #sinal-theme-layer {
     radial-gradient(ellipse at 14% 77%, rgba(255, 155, 74, 0.16), transparent 28%),
     radial-gradient(ellipse at 86% 78%, rgba(255, 170, 82, 0.14), transparent 26%);
   mix-blend-mode: screen;
-  animation: markWarmLightBreathe 8s ease-in-out infinite;
+  animation: markWarmLightBreathe 18s ease-in-out infinite;
 }
 
 #mark-theme-layer::after {
@@ -100,7 +100,7 @@ body[data-theme="sinal"] #sinal-theme-layer {
   -webkit-backdrop-filter: none;
   opacity: 1;
   transition: opacity 900ms ease;
-  animation: jonahDarkBreath 20s ease-in-out infinite;
+  animation: jonahDarkBreath 32s ease-in-out infinite;
 }
 
 body[data-theme="jonah"][data-prayer-state="praying"] #jonah-theme-layer::after {
@@ -152,7 +152,7 @@ body[data-theme="jonah"][data-prayer-state="praying"] #jonah-theme-layer::after 
     linear-gradient(180deg, rgba(210, 235, 255, 0.12), transparent 45%),
     linear-gradient(96deg, transparent 39%, rgba(255, 234, 190, 0.18) 48%, rgba(210, 235, 255, 0.10) 56%, transparent 68%);
   mix-blend-mode: screen;
-  animation: sinalHolyLight 9s ease-in-out infinite;
+  animation: sinalHolyLight 20s ease-in-out infinite;
 }
 
 #sinal-theme-layer::after {
@@ -164,7 +164,7 @@ body[data-theme="jonah"][data-prayer-state="praying"] #jonah-theme-layer::after 
     radial-gradient(ellipse at 70% 76%, rgba(255, 224, 190, 0.18), transparent 34%),
     linear-gradient(180deg, transparent 0 48%, rgba(83, 106, 131, 0.20) 70%, rgba(83, 106, 131, 0.34) 100%);
   filter: blur(12px);
-  animation: sinalCloudDrift 18s ease-in-out infinite;
+  animation: sinalCloudDrift 34s ease-in-out infinite;
 }
 
 .sinal-mist {
@@ -184,7 +184,7 @@ body[data-theme="jonah"][data-prayer-state="praying"] #jonah-theme-layer::after 
   background: linear-gradient(116deg, transparent 39%, rgba(232, 246, 255, 0.32) 40%, transparent 42%);
   opacity: 0;
   mix-blend-mode: screen;
-  animation: sinalLightning 11s steps(1, end) infinite;
+  animation: sinalLightning 28s steps(1, end) infinite;
 }
 
 body[data-theme="mark"] .prayer-verse p,
@@ -232,6 +232,14 @@ body[data-theme="jonah"][data-prayer-state="waiting"] img[alt="altar"] {
 }
 
 body[data-theme="jonah"][data-prayer-state="praying"] img[alt="altar"] {
+  filter: none !important;
+}
+
+body[data-theme="sinal"][data-prayer-state="waiting"] img[alt="altar"] {
+  filter: brightness(0.72) saturate(0.92) blur(0.1px) !important;
+}
+
+body[data-theme="sinal"][data-prayer-state="praying"] img[alt="altar"] {
   filter: none !important;
 }
 
