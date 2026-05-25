@@ -158,8 +158,9 @@
 
   function seedLayer(layerId, className, count, options) {
     var layer = document.getElementById(layerId);
-    if (!layer || layer.dataset.seeded === "true") return;
-    layer.dataset.seeded = "true";
+    var seedAttribute = "data-seeded-" + className;
+    if (!layer || layer.hasAttribute(seedAttribute)) return;
+    layer.setAttribute(seedAttribute, "true");
     for (var i = 0; i < count; i += 1) {
       var dot = document.createElement("span");
       dot.className = className;
@@ -227,15 +228,18 @@
   function seedEffects() {
     if (seeded) return;
     seeded = true;
-    seedLayer("mark-theme-layer", "mark-dust", 24, {
-      xMin: 12, xMax: 88, yMin: 18, yMax: 78, sizeMin: 1.4, sizeMax: 3.3, durationMin: 18, durationMax: 30, delayMax: 18
+    seedLayer("mark-theme-layer", "mark-dust", 18, {
+      xMin: 12, xMax: 88, yMin: 18, yMax: 78, sizeMin: 1.0, sizeMax: 2.4, durationMin: 26, durationMax: 42, delayMax: 26
     });
-    seedLayer("jonah-theme-layer", "jonah-particle", 28, {
-      xMin: 10, xMax: 90, yMin: 16, yMax: 86, sizeMin: 1.5, sizeMax: 4.2, durationMin: 22, durationMax: 38, delayMax: 24
+    seedLayer("jonah-theme-layer", "jonah-particle", 18, {
+      xMin: 10, xMax: 90, yMin: 16, yMax: 86, sizeMin: 0.9, sizeMax: 2.3, durationMin: 30, durationMax: 48, delayMax: 30
     });
     seedJonahRipples();
     seedLayer("sinal-theme-layer", "sinal-mist", 5, {
       xMin: 0, xMax: 86, yMin: 50, yMax: 82, sizeMin: 1, sizeMax: 2, durationMin: 28, durationMax: 46, delayMax: 24, widthMin: 180, widthMax: 340, heightMin: 56, heightMax: 110
+    });
+    seedLayer("sinal-theme-layer", "sinal-air-dust", 14, {
+      xMin: 8, xMax: 92, yMin: 14, yMax: 84, sizeMin: 0.8, sizeMax: 1.9, durationMin: 32, durationMax: 52, delayMax: 32
     });
   }
 

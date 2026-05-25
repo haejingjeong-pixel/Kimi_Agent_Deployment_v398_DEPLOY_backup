@@ -114,6 +114,33 @@ body.codex-theme-summer .summer-waiting-dim {
   animation-delay: -18s !important;
 }
 
+/* Shooting stars belong only to desert, summer, night, and Gethsemane themes. */
+body.codex-theme-mark .night-shooting-stars,
+body.codex-theme-jonah .night-shooting-stars,
+body.codex-theme-sinal .night-shooting-stars,
+body[data-current-theme="마가 다락방"] .night-shooting-stars,
+body[data-current-theme="요나의 고래뱃속"] .night-shooting-stars,
+body[data-current-theme="모세의 시내산"] .night-shooting-stars {
+  display: none !important;
+  animation: none !important;
+}
+
+body.codex-theme-mark .night-shooting-stars::before,
+body.codex-theme-mark .night-shooting-stars::after,
+body.codex-theme-jonah .night-shooting-stars::before,
+body.codex-theme-jonah .night-shooting-stars::after,
+body.codex-theme-sinal .night-shooting-stars::before,
+body.codex-theme-sinal .night-shooting-stars::after,
+body[data-current-theme="마가 다락방"] .night-shooting-stars::before,
+body[data-current-theme="마가 다락방"] .night-shooting-stars::after,
+body[data-current-theme="요나의 고래뱃속"] .night-shooting-stars::before,
+body[data-current-theme="요나의 고래뱃속"] .night-shooting-stars::after,
+body[data-current-theme="모세의 시내산"] .night-shooting-stars::before,
+body[data-current-theme="모세의 시내산"] .night-shooting-stars::after {
+  content: none !important;
+  animation: none !important;
+}
+
 /* Authoritative shared altar geometry.
    Every theme changes only img[src]; wrapper size, position, transform,
    transition, opacity, and animation stay identical. */
@@ -220,10 +247,12 @@ body[data-theme="jonah"][data-prayer-state="praying"] img[alt="altar"] {
 
 body[data-theme="sinal"][data-prayer-state="waiting"] img[alt="altar"] {
   filter: brightness(0.72) saturate(0.92) blur(0.1px) !important;
+  transition: filter 1000ms ease-in-out !important;
 }
 
 body[data-theme="sinal"][data-prayer-state="praying"] img[alt="altar"] {
   filter: none !important;
+  transition: filter 1000ms ease-in-out !important;
 }
 
 body.codex-theme-night[data-prayer-state="waiting"] img[alt="altar"],
