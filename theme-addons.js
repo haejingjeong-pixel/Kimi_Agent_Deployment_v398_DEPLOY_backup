@@ -28,6 +28,8 @@
   var baseThemeLabels = ["사막의 제단", "겟세마네 동산", "어두운 밤", "여름 녹음"];
   var activeExtraTheme = "";
   var seeded = false;
+  var sinalBackgroundSize = { width: 2912, height: 1632 };
+  var sinalPeakAnchor = { x: 0.54, y: 0.415 };
   var themeClassByExtraTheme = {
     mark: "codex-theme-mark",
     jonah: "codex-theme-jonah",
@@ -69,11 +71,88 @@
       layer.id = id;
       layer.setAttribute("aria-hidden", "true");
       if (theme === "sinal") {
-        var lightning = document.createElement("span");
-        lightning.className = "sinal-lightning";
-        layer.appendChild(lightning);
+        ["left", "right"].forEach(function (side) {
+          var cloud = document.createElement("span");
+          cloud.className = "sinal-top-cloud sinal-top-cloud-" + side;
+          layer.appendChild(cloud);
+        });
+        var flash = document.createElement("span");
+        flash.className = "sinal-lightning-flash";
+        layer.appendChild(flash);
+        var peakGlow = document.createElement("span");
+        peakGlow.className = "sinal-peak-glow";
+        layer.appendChild(peakGlow);
+        [
+          { name: "01-left", width: 33, height: 659 },
+          { name: "02-center-left", width: 62, height: 870 },
+          { name: "03-center-branch", width: 355, height: 820 },
+          { name: "04-right", width: 355, height: 537 }
+        ].forEach(function (config, index) {
+          var lightning = document.createElement("span");
+          lightning.className = "sinal-lightning sinal-lightning-" + config.name;
+          lightning.dataset.sourceWidth = String(config.width);
+          lightning.dataset.sourceHeight = String(config.height);
+          lightning.style.setProperty("--delay", (index * -3.6).toFixed(1) + "s");
+          layer.appendChild(lightning);
+        });
       }
       document.body.insertBefore(layer, root);
+    });
+  }
+
+  function parseCssLength(value, axisSize) {
+    var input = String(value || "").trim();
+    if (!input || input === "center") return axisSize * 0.5;
+    if (input === "top" || input === "left") return 0;
+    if (input === "bottom" || input === "right") return axisSize;
+    if (input.indexOf("calc(") === 0) {
+      input = input.slice(5, -1).replace(/\s+/g, "");
+      var match = input.match(/^(-?\d+(?:\.\d+)?)%([+-])(-?\d+(?:\.\d+)?)(vh|vw|px)$/);
+      if (match) {
+        var base = axisSize * (parseFloat(match[1]) / 100);
+        var amount = parseFloat(match[3]);
+        var unit = match[4];
+        var delta = unit === "vh" ? window.innerHeight * amount / 100 : unit === "vw" ? window.innerWidth * amount / 100 : amount;
+        return match[2] === "-" ? base - delta : base + delta;
+      }
+    }
+    if (input.indexOf("%") !== -1) return axisSize * parseFloat(input) / 100;
+    if (input.indexOf("vh") !== -1) return window.innerHeight * parseFloat(input) / 100;
+    if (input.indexOf("vw") !== -1) return window.innerWidth * parseFloat(input) / 100;
+    if (input.indexOf("px") !== -1 || /^-?\d/.test(input)) return parseFloat(input);
+    return axisSize * 0.5;
+  }
+
+  function getBackgroundPositionParts(position) {
+    var parts = String(position || "center center").trim().match(/calc\([^)]+\)|[^\s]+/g) || ["center", "center"];
+    if (parts.length === 1) parts.push("center");
+    return parts;
+  }
+
+  function syncSinalLightningAnchor() {
+    if (activeExtraTheme !== "sinal") return;
+    var layer = document.getElementById("sinal-theme-layer");
+    var background = findBackgroundNode();
+    if (!layer || !background) return;
+    var rect = background.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    var scale = Math.max(rect.width / sinalBackgroundSize.width, rect.height / sinalBackgroundSize.height);
+    var renderedWidth = sinalBackgroundSize.width * scale;
+    var renderedHeight = sinalBackgroundSize.height * scale;
+    var position = getBackgroundPositionParts(background.style.backgroundPosition || getComputedStyle(background).backgroundPosition);
+    var offsetX = parseCssLength(position[0], rect.width - renderedWidth);
+    var offsetY = parseCssLength(position[1], rect.height - renderedHeight);
+    var peakX = rect.left + offsetX + renderedWidth * sinalPeakAnchor.x;
+    var peakY = rect.top + offsetY + renderedHeight * sinalPeakAnchor.y;
+    layer.style.setProperty("--sinal-peak-x", peakX.toFixed(2) + "px");
+    layer.style.setProperty("--sinal-peak-y", peakY.toFixed(2) + "px");
+    layer.style.setProperty("--sinal-bg-scale", scale.toFixed(4));
+    Array.from(layer.querySelectorAll(".sinal-lightning")).forEach(function (lightning) {
+      var width = parseFloat(lightning.dataset.sourceWidth || "0");
+      var height = parseFloat(lightning.dataset.sourceHeight || "0");
+      if (!width || !height) return;
+      lightning.style.width = (width * scale).toFixed(2) + "px";
+      lightning.style.height = (height * scale).toFixed(2) + "px";
     });
   }
 
@@ -245,6 +324,11 @@
     updateThemeLabels(config.label);
     updateMenuActive(theme);
     syncPrayerState();
+    if (theme === "sinal") {
+      syncSinalLightningAnchor();
+      window.setTimeout(syncSinalLightningAnchor, 80);
+      window.setTimeout(syncSinalLightningAnchor, 260);
+    }
     if (theme === "jonah") {
       syncJonahRippleAnchor();
       window.setTimeout(syncJonahRippleAnchor, 80);
@@ -323,7 +407,10 @@
     seedEffects();
     syncJonahRippleAnchor();
     syncPrayerState();
-    window.addEventListener("resize", syncJonahRippleAnchor);
+    window.addEventListener("resize", function () {
+      syncJonahRippleAnchor();
+      syncSinalLightningAnchor();
+    });
     scheduleMenuInjection();
     document.addEventListener("click", function (event) {
       var button = event.target && event.target.closest ? event.target.closest("button") : null;
@@ -344,6 +431,7 @@
         syncPrayerState();
         updateMenuActive(activeExtraTheme);
         if (activeExtraTheme === "jonah") syncJonahRippleAnchor();
+        if (activeExtraTheme === "sinal") syncSinalLightningAnchor();
       }).observe(root, { childList: true, subtree: true, characterData: true });
     }
   });
