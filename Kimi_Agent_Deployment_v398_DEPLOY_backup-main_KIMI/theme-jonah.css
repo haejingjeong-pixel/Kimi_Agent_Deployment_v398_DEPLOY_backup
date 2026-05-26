@@ -1,0 +1,141 @@
+body[data-extra-theme="jonah"] {
+  background-color: #000204;
+}
+
+body:not([data-extra-theme="jonah"]) #jonah-theme-soft-layer {
+  display: none !important;
+}
+
+#jonah-theme-soft-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1000ms ease;
+}
+
+body[data-extra-theme="jonah"] #jonah-theme-soft-layer {
+  display: block;
+  opacity: 1;
+}
+
+#jonah-theme-soft-layer::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(ellipse at 36% 48%, rgba(48, 226, 220, 0.20), transparent 31%),
+    radial-gradient(ellipse at 72% 68%, rgba(24, 160, 184, 0.14), transparent 28%),
+    linear-gradient(126deg, transparent 24%, rgba(40, 220, 220, 0.13) 38%, rgba(180, 255, 245, 0.11) 49%, transparent 67%),
+    repeating-radial-gradient(ellipse at 38% 56%, rgba(96, 238, 230, 0.09) 0 1px, transparent 2px 20px);
+  filter: blur(1px);
+  mix-blend-mode: screen;
+  transform: rotate(-8deg) scaleX(1.18);
+  animation: jonahWaterLight 18s ease-in-out infinite;
+  display: none;
+}
+
+#jonah-theme-soft-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 42% 58%, rgba(1, 13, 18, 0.08) 0%, rgba(1, 13, 18, 0.28) 52%, rgba(1, 13, 18, 0.58) 100%),
+    linear-gradient(156deg, rgba(1, 13, 18, 0.12), rgba(1, 13, 18, 0.32) 54%, rgba(1, 13, 18, 0.50));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  opacity: 1;
+  transition: opacity 900ms ease;
+  animation: jonahDarkBreath 20s ease-in-out infinite;
+}
+
+body[data-extra-theme="jonah"][data-prayer-state="praying"] #jonah-theme-soft-layer::after {
+  opacity: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: none;
+}
+
+.jonah-floating-particle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 999px;
+  background: rgba(130, 255, 240, 0.42);
+  box-shadow: 0 0 10px rgba(65, 230, 220, 0.30);
+  animation: jonahParticleFloat var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+.jonah-water-ripple {
+  position: absolute;
+  left: calc(var(--altar-x, 50vw) + var(--x));
+  top: calc(var(--altar-y, 72vh) + var(--y));
+  width: var(--w);
+  height: var(--h);
+  border-radius: 999px;
+  border: 1px solid rgba(145, 255, 244, 0.16);
+  box-shadow:
+    0 0 12px rgba(90, 240, 230, 0.11),
+    inset 0 0 18px rgba(120, 255, 245, 0.05);
+  filter: blur(1.1px);
+  transform: translate(-50%, -50%) rotate(var(--r)) scaleX(var(--sx)) scale(0.68);
+  transform-origin: center center;
+  mix-blend-mode: screen;
+  animation: jonahRipplePulse var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+  display: none;
+}
+
+body[data-extra-theme="jonah"] .prayer-verse p {
+  position: relative;
+  z-index: 1;
+  color: rgba(232, 255, 250, 0.94) !important;
+  text-shadow:
+    0 0 3px rgba(0, 8, 12, 0.96),
+    0 0 9px rgba(0, 8, 12, 0.92),
+    0 0 18px rgba(0, 12, 18, 0.82),
+    0 0 30px rgba(0, 18, 24, 0.62),
+    0 2px 8px rgba(0, 0, 0, 0.86) !important;
+}
+
+body[data-extra-theme="jonah"][data-prayer-state="waiting"] img[alt="altar"] {
+  filter: brightness(0.72) saturate(0.92) !important;
+}
+
+body[data-extra-theme="jonah"][data-prayer-state="praying"] img[alt="altar"] {
+  filter: none !important;
+}
+
+button[data-jonah-theme].jonah-theme-active {
+  color: #8ff8ec !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: inset 0 0 0 1px rgba(143, 248, 236, 0.88);
+}
+
+@keyframes jonahWaterLight {
+  0%, 100% { transform: translate3d(-2%, 1%, 0) rotate(-8deg) scaleX(1.18); opacity: 0.66; }
+  50% { transform: translate3d(2%, -1%, 0) rotate(-5deg) scaleX(1.24); opacity: 0.88; }
+}
+
+@keyframes jonahDarkBreath {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 0.92; }
+}
+
+@keyframes jonahParticleFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.9); opacity: 0.10; }
+  45% { opacity: 0.56; }
+  75% { transform: translate3d(-14px, -44px, 0) scale(1.1); opacity: 0.34; }
+}
+
+@keyframes jonahRipplePulse {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--r)) scaleX(var(--sx)) scale(0.46); }
+  24% { opacity: var(--o); }
+  58% { opacity: 0.06; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(calc(var(--r) + var(--dr))) scaleX(var(--sx)) scale(1.24); }
+}
